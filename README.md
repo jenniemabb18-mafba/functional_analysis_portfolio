@@ -5,7 +5,7 @@ Jennie Mabb, M.S.
 Senior Management Analyst | Process & Data Integrity Specialist
 Specializing in Requirements Elicitation, Strategic Architecture, and Operational Governance
 
-A results-driven Analyst with 15+ years of experience in high-security federal (DOJ) and international financial (ABN AMRO) environments. I specialize in the "Structural Integrity of Information"—bridging the gap between complex business needs and technical execution through meticulous documentation and logical modeling.
+A results-driven Analyst with 15+ years of experience in high-security federal (DOJ) and international financial (ABN AMRO) environments. I specialize in the 'Structural Integrity of Information' — bridging the gap between complex business needs and technical execution through meticulous documentation and logical modeling.
 
 I leverage a Master of Science in Mental Health Counseling to provide advanced stakeholder elicitation, conflict resolution, and human-centered design, ensuring that technical systems are built to serve the mission and the user.
 
