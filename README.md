@@ -39,12 +39,14 @@ Key Deliverables: Development of a cryptographic randomizer for generating short
 
 Focus Areas: PCI DSS v4.0.1 Compliance: Strict enforcement of the prohibition against storing SAD post-authorization. Data Minimization (GDPR): Ensuring tokens exist only in ephemeral volatile memory, leaving no footprint for auditors to scrub.
 
-[Prescriptive_CDE_and_Logical_Mapping_Layer](
+[Prescriptive_CDE_and_Logical_Mapping_Layer](./PCI-DSS_Tokenization_Architect_Board.jpg)
 Objective: To design a decoupled database schema that minimizes the PCI DSS audit footprint by isolating sensitive financial data.
 
 Key Deliverables: Identity Vault (Table 1): A secure layer for PII, mapped to random surrogate keys (UID). Account Mapping Layer (Table 2): A translation bridge between customer profiles (UID) and card indices (CCid). Prescriptive CDE (Table 3): A hardened vault containing encrypted PANs, designed as the primary audit boundary.
 
 Focus Areas: Compliance Scoping: Partitioning data to ensure Table 1 and Table 2 remain OUT OF SCOPE, while hardening Table 3 as the MAXIMUM IN-SCOPE environment. Pseudonymization (GDPR Article 32): Utilizing decoupled tokenization to safeguard personal relationship links between users and their financial data.
+
+Additional Artifacts: (./PCI-DSS_GDPR_Compliance_Translation_Matrix.pdf) and (./PCI-DSS_GDPR_Compliance_Translation_Matrix_Scope.pdf) for notations on the Architect Board.
 
 ### [Database Architecture & Migration Spec](./MySQL_Data_Integrity_and_Migration_Specification_Mabb.pdf)
 The Objective: Oversee a large-scale database overhaul involving 37,994 records and structural renaming.
