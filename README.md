@@ -24,12 +24,26 @@ Key Deliverable: Developed a platform recommendation white paper comparing Linux
 
 Focus Areas: Platform Evaluation, Distributed Systems, and Kotlin/Cross-platform strategy.
 
-### [Regulatory Compliance: GDPR White Paper](./White_Paper_ANN_GDPR_Mabb.pdf)
+### [Regulatory Compliance] 
+[GDPR White Paper](/White_Paper_ANN_GDPR_Mabb.pdf)
 The Objective: Analyze the impact of international privacy laws on Artificial Neural Networks (ANN) and personalization engines.
 
 Key Deliverable: A formal analysis of "Privacy by Design," addressing Right to Erasure and Data Portability within automated systems.
 
 Focus Areas: GDPR, International Data Privacy Law, and Risk Mitigation.
+[Stateless_Tokenization_Handshake](./PCI-DSS_Architecture_Board.pdf)
+Objective: To implement a stateless cryptographic engine that secures transaction validation without persisting Sensitive Authentication Data (SAD).
+
+Key Deliverables: Development of a cryptographic randomizer for generating short-lived ephemeral Dynamic CVVs (dCVVs). Implementation of transient session state management that enforces a 90-second expiration policy.
+
+Focus Areas: PCI DSS v4.0.1 Compliance: Strict enforcement of the prohibition against storing SAD post-authorization. Data Minimization (GDPR): Ensuring tokens exist only in ephemeral volatile memory, leaving no footprint for auditors to scrub.
+
+[Prescriptive_CDE_and_Logical_Mapping_Layer](
+Objective: To design a decoupled database schema that minimizes the PCI DSS audit footprint by isolating sensitive financial data.
+
+Key Deliverables: Identity Vault (Table 1): A secure layer for PII, mapped to random surrogate keys (UID). Account Mapping Layer (Table 2): A translation bridge between customer profiles (UID) and card indices (CCid). Prescriptive CDE (Table 3): A hardened vault containing encrypted PANs, designed as the primary audit boundary.
+
+Focus Areas: Compliance Scoping: Partitioning data to ensure Table 1 and Table 2 remain OUT OF SCOPE, while hardening Table 3 as the MAXIMUM IN-SCOPE environment. Pseudonymization (GDPR Article 32): Utilizing decoupled tokenization to safeguard personal relationship links between users and their financial data.
 
 ### [Database Architecture & Migration Spec](./MySQL_Data_Integrity_and_Migration_Specification_Mabb.pdf)
 The Objective: Oversee a large-scale database overhaul involving 37,994 records and structural renaming.
@@ -45,10 +59,6 @@ Key Deliverable: Developed Sequence Diagrams, Activity Maps, and UI Logic Workfl
 
 Focus Areas: UML Modeling, Decision Logic, and User Experience (UX) Strategy.
 
-Additional Designs:
-![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
-![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
-
 Core Competencies
 Methodology: SDLC, Agile Requirements Gathering, Operational Diagnostics.
 
@@ -60,3 +70,8 @@ Professional Contact
 Email: jennie.mabb18@gmail.com
 Location: Virginia (Remote-preferred)
 Eligibility: Public Trust (DOJ)
+
+Additional Designs: 
+![PCI-DSS_Architecture_Board](./PCI-DSS_Architecture_Board.pdf)
+![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
+![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
