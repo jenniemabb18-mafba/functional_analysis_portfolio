@@ -74,7 +74,7 @@ Email: jennie.mabb18@gmail.com
 Location: Virginia (Remote-preferred)
 Eligibility: Public Trust (DOJ)
 
-Additional Designs: 
+### Additional Designs: 
 ![PCI-DSS_Architecture_Board](./PCI-DSS_Tokenization_Architect_Board.jpg)
 ![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
 ![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
