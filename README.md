@@ -32,7 +32,7 @@ Key Deliverable: A formal analysis of "Privacy by Design," addressing Right to E
 
 Focus Areas: GDPR, International Data Privacy Law, and Risk Mitigation.
 
-[Stateless_Tokenization_Handshake](./PCI-DSS_Architect_Board.pdf)
+[Stateless_Tokenization_Handshake](./PCI-DSS_Tokenization_Architect_Board.pdf)
 Objective: To implement a stateless cryptographic engine that secures transaction validation without persisting Sensitive Authentication Data (SAD).
 
 Key Deliverables: Development of a cryptographic randomizer for generating short-lived ephemeral Dynamic CVVs (dCVVs). Implementation of transient session state management that enforces a 90-second expiration policy.
@@ -73,6 +73,6 @@ Location: Virginia (Remote-preferred)
 Eligibility: Public Trust (DOJ)
 
 Additional Designs: 
-![PCI-DSS_Architecture_Board](./PCI-DSS_Architect_Board.pdf)
+![PCI-DSS_Architecture_Board](./PCI-DSS_Tokenization_Architect_Board.pdf)
 ![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
 ![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
