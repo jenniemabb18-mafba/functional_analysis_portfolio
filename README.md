@@ -46,7 +46,7 @@ Key Deliverables: Identity Vault (Table 1): A secure layer for PII, mapped to ra
 
 Focus Areas: Compliance Scoping: Partitioning data to ensure Table 1 and Table 2 remain OUT OF SCOPE, while hardening Table 3 as the MAXIMUM IN-SCOPE environment. Pseudonymization (GDPR Article 32): Utilizing decoupled tokenization to safeguard personal relationship links between users and their financial data.
 
-Additional Artifacts: [PCI-DSS_GDPR_Compliance_Translation_Matrix](./PCI-DSS_GDPR_Compliance_Translation_Matrix.pdf) and [./PCI-DSS_GDPR_Compliance_Translation_Matrix_Scope](./PCI-DSS_GDPR_Compliance_Translation_Matrix_Scope.pdf) for notations on the Architect Board.
+Additional Artifacts: [PCI-DSS_GDPR_Compliance_Translation_Matrix](./PCI-DSS_GDPR_Compliance_Translation_Matrix.pdf) and [PCI-DSS_GDPR_Compliance_Translation_Matrix_Scope](./PCI-DSS_GDPR_Compliance_Translation_Matrix_Scope.pdf) for notations on the Architect Board.
 
 ### [Database Architecture & Migration Spec](./MySQL_Data_Integrity_and_Migration_Specification_Mabb.pdf)
 The Objective: Oversee a large-scale database overhaul involving 37,994 records and structural renaming.
