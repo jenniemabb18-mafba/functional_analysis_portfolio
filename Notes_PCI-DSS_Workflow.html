@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCI DSS & GDPR Compliance Translation Matrix</title>
+    
+    <!-- External Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS for modern layout structure -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            font-family: 'Google Sans', sans-serif;
+        }
+        /* Completely flat transition states */
+        .flat-transition {
+            transition: all 0.25s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 rounded-lg">
+                    <span class="material-icons block">security</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Compliance & Security Matrix</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">PCI DSS v4.0.1 & GDPR Audit Mapping</p>
+                </div>
+            </div>
+            
+            <!-- Quick Stats HUD -->
+            <div class="flex items-center gap-4 text-xs font-mono">
+                <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 rounded-lg border border-emerald-200 dark:border-emerald-800/40 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    PCI SCOPE: OPTIMIZED
+                </div>
+                <div class="px-3 py-1.5 bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 rounded-lg border border-blue-200 dark:border-blue-800/40 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    SAD STATE: ZERO STORAGE
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="grow max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6">
+        
+        <!-- Controls & Interactive Menu -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div class="flex flex-wrap gap-1">
+                <button onclick="setView('cards')" id="tab-cards" class="px-4 py-2 text-xs font-semibold rounded-lg flat-transition bg-blue-600 text-white">
+                    Modular Component Cards
+                </button>
+                <button onclick="setView('matrix')" id="tab-matrix" class="px-4 py-2 text-xs font-semibold rounded-lg flat-transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    Comparative Matrix View
+                </button>
+                <button onclick="setView('rehearsal')" id="tab-rehearsal" class="px-4 py-2 text-xs font-semibold rounded-lg flat-transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    Executive Rehearsal Checklist
+                </button>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="window.print()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white dark:bg-slate-200 dark:hover:bg-slate-300 dark:text-slate-900 text-xs font-bold font-mono rounded-lg flex items-center gap-1.5 flat-transition">
+                    <span class="material-icons text-sm">print</span> Export PDF Document
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 1: COMPONENT CARDS -->
+        <div id="view-cards" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Table 1: Identity Vault Card -->
+            <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between overflow-hidden">
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="text-[9px] bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-extrabold font-mono tracking-wider px-2 py-0.5 rounded uppercase">
+                                IDENTITY LAYER (OUT OF SCOPE)
+                            </span>
+                            <h2 class="text-lg font-bold mt-1 text-slate-800 dark:text-slate-100">Table 1: Identity Vault</h2>
+                        </div>
+                        <span class="text-[9px] bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 px-2 py-1 rounded font-mono border border-blue-100 dark:border-blue-900">
+                            Screenshot 2026-07-07 124745.jpg
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Architecture Overview:</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+                                This table acts as your 'Identity Sanctuary'. It maps physical, real-world customer identifiers (Names, SSNs, personal data) strictly to a random surrogate Key (UID). This completely decouples personal identification from financial account identifiers.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">security</span>
+                                PCI DSS v4.0.1 Scoping:
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Under PCI DSS v4.0.1, because this table does not store, process, or transmit Primary Account Numbers (PANs), it is completely OUT OF SCOPE for compliance audits. This reduces assessment footprints drastically.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-blue-500/5 rounded-lg border border-blue-500/10 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">privacy_tip</span>
+                                Privacy Controls (GDPR):
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Under GDPR/ISO 27701, this table represents maximum exposure since it holds direct Personally Identifiable Information (PII). It falls strictly under standard data minimization and processing consent rules, while keeping credit cards out of its footprint.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table 2: Account Mapping Card -->
+            <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between overflow-hidden">
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="text-[9px] bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-extrabold font-mono tracking-wider px-2 py-0.5 rounded uppercase">
+                                LOGICAL MAPPING LAYER (OUT OF SCOPE)
+                            </span>
+                            <h2 class="text-lg font-bold mt-1 text-slate-800 dark:text-slate-100">Table 2: Account Mapping</h2>
+                        </div>
+                        <span class="text-[9px] bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 px-2 py-1 rounded font-mono border border-blue-100 dark:border-blue-900">
+                            Screenshot 2026-07-07 124800.jpg
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Architecture Overview:</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+                                This table serves as a safe translation layer establishing a 1-to-many relationship mapping a specific customer profile (UID) to their corresponding card vaults (CCid) without revealing the credit card string itself.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">security</span>
+                                PCI DSS v4.0.1 Scoping:
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Because this database does not process or preserve true credit card strings (PANs), it remains entirely OUT OF SCOPE for PCI DSS auditing rules, saving substantial infrastructural overhead.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-blue-500/5 rounded-lg border border-blue-500/10 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">privacy_tip</span>
+                                Privacy Controls (GDPR):
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Acts as a surrogate bridge. If Table 1 is deleted due to GDPR's 'Right to be Forgotten' (Article 17), this link is dissolved instantly without destroying the historical transactional values in the payment ledger.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table 3: CDE Vault Card -->
+            <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between overflow-hidden">
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="text-[9px] bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-400 font-extrabold font-mono tracking-wider px-2 py-0.5 rounded uppercase">
+                                PCI CARDHOLDER DATA ENVIRONMENT (CDE) - MAXIMUM IN-SCOPE
+                            </span>
+                            <h2 class="text-lg font-bold mt-1 text-slate-800 dark:text-slate-100">Table 3: The Prescriptive CDE (The Vault)</h2>
+                        </div>
+                        <span class="text-[9px] bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 px-2 py-1 rounded font-mono border border-blue-100 dark:border-blue-900">
+                            Screenshot 2026-07-07 124818.jpg
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Architecture Overview:</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+                                This is your primary Cardholder Data Environment (CDE). It maps the surrogate Key (CCid) strictly to the heavily encrypted Primary Account Number (PAN). Absolutely NO SENSITIVE AUTHENTICATION DATA (SAD), such as CVVs or PIN blocks, is stored here post-authorization.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">security</span>
+                                PCI DSS v4.0.1 Scoping:
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                This is the CORE TARGET of a PCI DSS Audit. Every single control in Requirements 1-12 applies here. It must run on fully isolated infrastructure (network segmentation), implement AES-256 database-level encryption, and force strict multi-factor authentication controls.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-blue-500/5 rounded-lg border border-blue-500/10 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">privacy_tip</span>
+                                Privacy Controls (GDPR):
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Since the PAN is completely tokenized and decoupled from user names inside this database (requiring Table 2 and Table 1 to re-identify the human), this implementation satisfies GDPR's requirements for Pseudonymization (Article 32).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tokenization Handshake Module Card -->
+            <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between overflow-hidden">
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="text-[9px] bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-extrabold font-mono tracking-wider px-2 py-0.5 rounded uppercase">
+                                STATELESS CRYPTOGRAPHIC ENGINE
+                            </span>
+                            <h2 class="text-lg font-bold mt-1 text-slate-800 dark:text-slate-100">The Tokenization Handshake Module</h2>
+                        </div>
+                        <span class="text-[9px] bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 px-2 py-1 rounded font-mono border border-blue-100 dark:border-blue-900">
+                            Screenshot 2026-07-07 124834.jpg
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Architecture Overview:</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
+                                When an active purchase is made, the application validates the user identity through Table 1 and pulls the mapped credit index. Instead of retrieving or keeping static verification codes, this module generates a short-lived ephemeral Dynamic CVV (dCVV).
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">security</span>
+                                PCI DSS v4.0.1 Scoping:
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Perfectly aligns with PCI Requirement 3's strict prohibition against storing Sensitive Authentication Data (SAD) post-authorization. Because the dynamic token operates like a rolling RSA code, it instantly expires and is permanently zeroized, leaving zero footprint for auditors to scrub.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-blue-500/5 rounded-lg border border-blue-500/10 text-xs">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                <span class="material-icons text-sm">privacy_tip</span>
+                                Privacy Controls (GDPR):
+                            </h4>
+                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Maintains optimal data minimization principles. It only generates transient variables that exist in ephemeral cache state for 90 seconds, satisfying the 'Security of Processing' guidelines.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- VIEW 2: COMPARATIVE MATRIX VIEW -->
+        <div id="view-matrix" class="hidden w-full overflow-x-auto bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-bold uppercase text-[10px] tracking-wider text-slate-500 dark:text-slate-400">
+                        <th class="p-4">Reference File</th>
+                        <th class="p-4">Module Name</th>
+                        <th class="p-4">Classification</th>
+                        <th class="p-4">PCI DSS v4.0.1 Scoping Summary</th>
+                        <th class="p-4">GDPR Privacy Impact</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 flat-transition">
+                        <td class="p-4 font-mono text-[10px] text-slate-500">Screenshot 2026-07-07 124745.jpg</td>
+                        <td class="p-4 font-bold">Table 1: Identity Vault</td>
+                        <td class="p-4">
+                            <span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 font-bold px-2 py-0.5 rounded text-[10px]">OUT OF SCOPE</span>
+                        </td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed">Contains no PANs. Reduces assessment footprint drastically.</td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed">Maximum risk footprint. Holds high-exposure PII under standard data minimization rules.</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 flat-transition">
+                        <td class="p-4 font-mono text-[10px] text-slate-500">Screenshot 2026-07-07 124800.jpg</td>
+                        <td class="p-4 font-bold">Table 2: Account Mapping</td>
+                        <td class="p-4">
+                            <span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 font-bold px-2 py-0.5 rounded text-[10px]">OUT OF SCOPE</span>
+                        </td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed">Contains no physical card strings. Eliminates compliance overhead.</td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed">Surrogate bridge linking UID to CCid. Dissolved instantly upon GDPR deletion request.</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 flat-transition">
+                        <td class="p-4 font-mono text-[10px] text-slate-500">Screenshot 2026-07-07 124818.jpg</td>
+                        <td class="p-4 font-bold text-red-600 dark:text-red-400">Table 3: The Prescriptive CDE</td>
+                        <td class="p-4">
+                            <span class="bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-400 font-bold px-2 py-0.5 rounded text-[10px]">IN-SCOPE</span>
+                        </td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">Core Target. Requires strict isolation, AES-256 database-level encryption, and active audit logging.</td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed">Satisfies GDPR Article 32 (Pseudonymization) by stripping personal names from PAN records.</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 flat-transition">
+                        <td class="p-4 font-mono text-[10px] text-slate-500">Screenshot 2026-07-07 124834.jpg</td>
+                        <td class="p-4 font-bold">Tokenization Handshake Module</td>
+                        <td class="p-4">
+                            <span class="bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-400 font-bold px-2 py-0.5 rounded text-[10px]">STATELESS ENGINE</span>
+                        </td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed">Stateless ephemeral dCVV. Satisfies zero storage rules post-authorization.</td>
+                        <td class="p-4 text-slate-600 dark:text-slate-300 leading-relaxed">Upholds data minimization. Variables expire within 90 seconds from active session states.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- VIEW 3: EXECUTIVE REHEARSAL CHECKLIST -->
+        <div id="view-rehearsal" class="hidden flex-col gap-6">
+            <div class="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/40 p-5 rounded-xl text-xs space-y-2">
+                <h3 class="font-bold text-sm text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
+                    <span class="material-icons text-sm">tips_and_updates</span>
+                    Presentation Rehearsal Dashboard
+                </h3>
+                <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Jennie, use this tool to mock-review each architectural requirement on screen. Click the checklist cards to verify that your explanation covers the technical mechanisms described verbatim inside each source file.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Checklist 1 -->
+                <div class="bg-white dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[9px] font-bold text-slate-400 font-mono">Screenshot 2026-07-07 124745.jpg</span>
+                            <span class="text-[9px] bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded uppercase font-bold">Table 1</span>
+                        </div>
+                        <h4 class="font-bold text-sm mb-2 text-slate-800 dark:text-slate-100">Identity Sanctuary Checklist</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I verified that the Identity Vault acts as the 'Identity Sanctuary'.</span>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I explained why Table 1 reduces the PCI assessment footprint (No PANs stored).</span>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I covered GDPR rules for SSNs and direct personal identifiers.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checklist 2 -->
+                <div class="bg-white dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[9px] font-bold text-slate-400 font-mono">Screenshot 2026-07-07 124800.jpg</span>
+                            <span class="text-[9px] bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded uppercase font-bold">Table 2</span>
+                        </div>
+                        <h4 class="font-bold text-sm mb-2 text-slate-800 dark:text-slate-100">Translation Link Boundaries</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I described the 1-to-many relationship translating UID to card pointers (CCid).</span>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I justified its Out-Of-Scope designation to mock auditors.</span>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I linked Table 2 with the GDPR 'Right to be Forgotten' (dissolving links instantly).</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checklist 3 -->
+                <div class="bg-white dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[9px] font-bold text-slate-400 font-mono">Screenshot 2026-07-07 124818.jpg</span>
+                            <span class="text-[9px] bg-red-100 dark:bg-red-950/20 text-red-600 px-2 py-0.5 rounded uppercase font-bold">Table 3</span>
+                        </div>
+                        <h4 class="font-bold text-sm mb-2 text-slate-800 dark:text-slate-100">CDE Core Target Isolation</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I emphasized that NO CVV OR PIN BLOCKS are stored here.</span>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span>I called out AES-256 database-level encryption explicitly.</span>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer flat-transition text-xs">
+                                <input type="checkbox" class="mt-0.5 rounded border-slate-300 text-blue-600 rounded bg-transparent">
+                                <span>I detailed GDPR Pseudonymization (Article 32) mapping protocols.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checklist 4: Handshake -->
+                <div class="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between overflow-hidden">
+                    <div class="p-5 space-y-4">
+                        <div class="flex justify-between items-start gap-2">
+                            <div>
+                                <span class="text-[9px] bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-extrabold font-mono tracking-wider px-2 py-0.5 rounded uppercase">
+                                    STATELESS ENGINE
+                                </span>
+                                <h2 class="text-lg font-bold mt-1 text-slate-800 dark:text-slate-100">The Token Handshake Engine</h2>
+                            </div>
+                            <span class="text-[9px] bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 px-2 py-1 rounded font-mono border border-blue-100 dark:border-blue-900">
+                                Screenshot 2026-07-07 124834.jpg
+                            </span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
+                                <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                    <span class="material-icons text-sm">security</span>
+                                    SAD Zeroization (Requirement 3):
+                                </h4>
+                                <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                    Does Jennie know exactly why the dCVV is generated in cache and immediately wiped post-authorization? To satisfy Requirement 3 prohibiting post-authorization storage of Sensitive Authentication Data.
+                                </p>
+                            </div>
+
+                            <div class="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20 text-xs">
+                                <h4 class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 text-[11px] mb-1">
+                                    <span class="material-icons text-sm">privacy_tip</span>
+                                    GDPR Compliance:
+                                    <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold px-1 py-0.5 rounded uppercase">Data Minimization</span>
+                                </h4>
+                                <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                    All parameters and dynamic tokens expire after 90 seconds, fulfilling standard Data Minimization principles under Security of Processing requirements.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>PCI DSS & GDPR Architectural Portfolio &bull; 2-Page Executive Blueprint</span>
+            <span>Current Date of Evaluation: July 7, 2026</span>
+        </div>
+    </footer>
+
+    <!-- Core Interactive Logic -->
+    <script>
+        // Track the current view tab
+        let currentView = 'cards';
+
+        window.setView = (view) => {
+            currentView = view;
+            
+            // Elements
+            const tabCards = document.getElementById('tab-cards');
+            const tabBlueprints = document.getElementById('btn-view-blueprints'); // placeholder for backward compatibility mapping
+            const btnInteractive = document.getElementById('tab-cards');
+            const btnMatrix = document.getElementById('tab-matrix');
+            const btnRehearsal = document.getElementById('tab-rehearsal');
+
+            const viewCards = document.getElementById('view-cards');
+            const viewMatrix = document.getElementById('view-matrix');
+            const viewRehearsal = document.getElementById('view-rehearsal');
+
+            // Reset tab styles to flat unselected look
+            const tabs = [btnInteractive, btnMatrix, btnRehearsal];
+            tabs.forEach(tab => {
+                if (tab) {
+                    tab.className = "px-4 py-2 text-xs font-semibold rounded-lg flat-transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800";
+                }
+            });
+
+            // Set active views
+            if (view === 'cards') {
+                btnInteractive.className = "px-4 py-2 text-xs font-semibold rounded-lg flat-transition bg-blue-600 text-white";
+                viewCards.classList.remove('hidden');
+                viewCards.classList.add('grid');
+                viewMatrix.classList.add('hidden');
+                viewRehearsal.classList.add('hidden');
+                viewRehearsal.classList.remove('flex');
+            } else if (view === 'matrix') {
+                btnMatrix.className = "px-4 py-2 text-xs font-semibold rounded-lg flat-transition bg-blue-600 text-white";
+                viewCards.classList.add('hidden');
+                viewCards.classList.remove('grid');
+                viewMatrix.classList.remove('hidden');
+                viewRehearsal.classList.add('hidden');
+                viewRehearsal.classList.remove('flex');
+            } else if (view === 'rehearsal') {
+                btnRehearsal.className = "px-4 py-2 text-xs font-semibold rounded-lg flat-transition bg-blue-600 text-white";
+                viewCards.classList.add('hidden');
+                viewCards.classList.remove('grid');
+                viewMatrix.classList.add('hidden');
+                viewRehearsal.classList.remove('hidden');
+                viewRehearsal.classList.add('flex');
+            }
+        };
+
+        // Initialize active configuration default
+        window.onload = () => {
+            setView('cards');
+        };
+    </script>
+</body>
+</html>
