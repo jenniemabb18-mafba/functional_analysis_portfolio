@@ -9,7 +9,7 @@ A results-driven Analyst with 15+ years of experience in high-security federal (
 
 I leverage a Master of Science in Mental Health Counseling to provide advanced stakeholder elicitation, conflict resolution, and human-centered design, ensuring that technical systems are built to serve the mission and the user.
 
-🛠 Strategic Deliverables & Case Studies
+## Strategic Deliverables & Case Studies
 ### [Functional Requirements Design (NTS)](./NTS_Functional_Requirements_Design.pdf)
 The Objective: Transform a manual driver education process into a secure, cloud-based platform.
 
@@ -48,13 +48,6 @@ Focus Areas: Compliance Scoping: Partitioning data to ensure Table 1 and Table 2
 
 Additional Artifacts: [PCI-DSS_GDPR_Compliance_Translation_Matrix](./PCI-DSS_GDPR_Compliance_Translation_Matrix.pdf) and [PCI-DSS_GDPR_Compliance_Translation_Matrix_Scope](./PCI-DSS_GDPR_Compliance_Translation_Matrix_Scope.pdf) for notations on the Architect Board.
 
-### [Database Architecture & Migration Spec](./MySQL_Data_Integrity_and_Migration_Specification_Mabb.pdf)
-The Objective: Oversee a large-scale database overhaul involving 37,994 records and structural renaming.
-
-Key Deliverable: Documented a full migration path in MySQL, focusing on Referential Integrity and data type standardization to prevent loss during transformation.
-
-Focus Areas: SQL (MySQL), Relational Logic, and Audit-Ready Record Verification.
-
 ### [UML System Logic & UX Modeling](./NTS_UML_System_Designs_Mabb.pdf)
 The Objective: Visualize "Actor" interactions and complex system workflows to prevent operational bottlenecks.
 
@@ -62,16 +55,22 @@ Key Deliverable: Developed Sequence Diagrams, Activity Maps, and UI Logic Workfl
 
 Focus Areas: UML Modeling, Decision Logic, and User Experience (UX) Strategy.
 
+### [Database Architecture & Migration Spec](./MySQL_Data_Integrity_and_Migration_Specification_Mabb.pdf)
+The Objective: Oversee a large-scale database overhaul involving 37,994 records and structural renaming.
+
+Key Deliverable: Documented a full migration path in MySQL, focusing on Referential Integrity and data type standardization to prevent loss during transformation.
+
+Focus Areas: SQL (MySQL), Relational Logic, and Audit-Ready Record Verification.
+
 ### [System_Architecture_Models](./System_Architecture_Models)
-## Credit Card Rewards Optimization Engine
-[Credit_Card_Bonuses_Database](./Credit_Card_Bonuses_database_schema_flow_visualizer.html)and [Credit_Card_Bonuses_Process_Flow](./Credit_Card_Bonuses_process_flow_visualizer.html)
+Credit Card Rewards Optimization Engine: [Credit_Card_Bonuses_Database](./Credit_Card_Bonuses_database_schema_flow_visualizer.html)and [Credit_Card_Bonuses_Process_Flow](./Credit_Card_Bonuses_process_flow_visualizer.html)
 Objective: This project builds an interactive simulation suite to demonstrate the real-time processing, validation, and auditing lifecycle of financial transaction data.  
 
 Key Deliverables: Interactive Schema Canvas (ERD): A draggable, coordinate-aware database diagram enforcing $1:N$ and $1:1$ relational boundaries via dynamic SVG connection lines. Core Fast-Path Flow Loop: A step-by-step processing engine that visualizes ingestion rules, live SQL command traces, and resolved output JSON payloads
 
 Focus Areas: System Process Architecture: Focuses on runtime sequence mapping, operational latency reduction, and event-driven alerting rules. Information & Data Architecture: Focuses on managing schema integrity, validating foreign key traceability, and isolating heavy asynchronous database queries  
 
-## Additional Designs: 
+Additional Designs: 
 ![PCI-DSS_Architecture_Board](./PCI-DSS_Tokenization_Architect_Board.jpg)
 ![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
 ![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
