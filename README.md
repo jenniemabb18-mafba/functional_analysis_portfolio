@@ -62,7 +62,7 @@ Key Deliverable: Developed Sequence Diagrams, Activity Maps, and UI Logic Workfl
 
 Focus Areas: UML Modeling, Decision Logic, and User Experience (UX) Strategy.
 
-### [Credit Card Rewards Optimization Engine]
+### Credit Card Rewards Optimization Engine
 [Credit_Card_Bonuses_Database](./   )and [Credit_Card_Bonuses_Process_Flow](./___)
 Objective: This project builds an interactive simulation suite to demonstrate the real-time processing, validation, and auditing lifecycle of financial transaction data.  
 
@@ -70,11 +70,14 @@ Key Deliverables: Interactive Schema Canvas (ERD): A draggable, coordinate-aware
 
 Focus Areas: System Process Architecture: Focuses on runtime sequence mapping, operational latency reduction, and event-driven alerting rules. Information & Data Architecture: Focuses on managing schema integrity, validating foreign key traceability, and isolating heavy asynchronous database queries  
 
-### [Core Competencies]
+### Additional Designs: 
+![PCI-DSS_Architecture_Board](./PCI-DSS_Tokenization_Architect_Board.jpg)
+![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
+![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
+
+### Core Competencies:
 Methodology: SDLC, Agile Requirements Gathering, Operational Diagnostics.
-
 Technical Literacy: SQL (MySQL), UML Modeling (Lucid/Visio), System Architecture Analysis.
-
 Interpersonal: Advanced Clinical Elicitation, Stakeholder Management, Conflict De-escalation.
 
 Professional Contact
@@ -82,7 +85,4 @@ Email: jennie.mabb18@gmail.com
 Location: Virginia (Remote-preferred)
 Eligibility: Public Trust (DOJ)
 
-### Additional Designs: 
-![PCI-DSS_Architecture_Board](./PCI-DSS_Tokenization_Architect_Board.jpg)
-![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
-![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
+
