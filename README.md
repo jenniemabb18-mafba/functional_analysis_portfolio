@@ -24,7 +24,7 @@ Key Deliverable: Developed a platform recommendation white paper comparing Linux
 
 Focus Areas: Platform Evaluation, Distributed Systems, and Kotlin/Cross-platform strategy.
 
-### Regulatory Compliance 
+### [Data_Governance_Compliance](./Data_Governance_Compliance)
 [GDPR White Paper](/White_Paper_ANN_GDPR_Mabb.pdf)
 The Objective: Analyze the impact of international privacy laws on Artificial Neural Networks (ANN) and personalization engines.
 
