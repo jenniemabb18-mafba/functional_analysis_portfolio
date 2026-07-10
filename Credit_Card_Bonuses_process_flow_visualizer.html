@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction Process Flow Visualizer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .flow-grid-bg {
+      background-size: 20px 20px;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .node-active {
+      border-color: #3b82f6;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+      background-color: #1e3a8a;
+    }
+    .node-success {
+      border-color: #10b981;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+      background-color: #064e3b;
+    }
+    .node-alert {
+      border-color: #f43f5e;
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+      background-color: #4c0519;
+    }
+    .node-decoupled {
+      border-color: #f59e0b;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+      background-color: #451a03;
+    }
+    /* Simple scrollbar design */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans overflow-hidden">
+
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 z-10 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="bg-blue-600 text-white p-2 rounded-lg shadow-md shadow-blue-500/20">
+        <i data-lucide="git-commit" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight">Reward Optimization Flow Visualizer</h1>
+        <p class="text-xs text-slate-400">Core Fast-Path Execution Loop (Campaign Engine Decoupled)</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <button onclick="resetFlow()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3.5 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-700">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        Reset Journey
+      </button>
+      <button id="play-btn" onclick="toggleAutoPlay()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md shadow-blue-500/10">
+        <i id="play-icon" data-lucide="play" class="w-4 h-4"></i>
+        <span id="play-text">Auto Play Flow</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="bg-slate-900/50 border-b border-slate-800 px-6 py-3 flex flex-wrap items-center gap-4 text-xs z-10 shrink-0">
+    <span class="font-bold text-slate-400 uppercase tracking-wider">Test Scenario Settings:</span>
+    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+      <span class="text-slate-500">Card Swiped:</span>
+      <select id="scenario-card" onchange="initiateScenario()" class="bg-transparent text-blue-400 font-bold outline-none cursor-pointer">
+        <option value="chase_sapphire" class="bg-slate-950 text-slate-100">Chase Sapphire (3% Dining, 2% Travel)</option>
+        <option value="amex_gold" class="bg-slate-950 text-slate-100">Amex Gold (4% Dining, 4% Groceries)</option>
+      </select>
+    </div>
+    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+      <span class="text-slate-500">Category:</span>
+      <select id="scenario-cat" onchange="initiateScenario()" class="bg-transparent text-blue-400 font-bold outline-none cursor-pointer">
+        <option value="Dining" class="bg-slate-950 text-slate-100">Dining (CAT_DIN)</option>
+        <option value="Groceries" class="bg-slate-950 text-slate-100">Groceries (CAT_GROC)</option>
+        <option value="Travel" class="bg-slate-950 text-slate-100">Travel (CAT_TRAV)</option>
+      </select>
+    </div>
+    
+    <div class="h-4 w-[1px] bg-slate-800"></div>
+    <span class="text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-semibold">Table 4 Campaigns Decoupled</span>
+  </div>
+
+  <!-- Workspace split -->
+  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+    <!-- Interactive Map (Left Panel) -->
+    <div class="flex-1 relative flow-grid-bg overflow-y-auto p-6 flex flex-col items-center">
+      
+      <!-- Flow Diagram Area (CSS Grid Layout) -->
+      <div class="relative w-full max-w-5xl min-h-[750px] flex gap-12 justify-center py-4">
+        
+        <!-- COLUMN 1: Streamlined Core Fast-Path (Steps 1 to 7) -->
+        <div class="flex flex-col items-center gap-4 w-72">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 border-b border-slate-800 pb-1 w-full text-center">Core Transaction Loop</div>
+
+          <!-- Node 1 -->
+          <div id="node-1" class="w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700" onclick="jumpToStep(1)">
+            <div class="text-[10px] uppercase font-mono text-blue-400 font-bold">Step 1: Swipe Ingestion</div>
+            <div class="text-xs font-semibold mt-1">Transaction Swiped</div>
+            <div class="text-[10px] text-slate-400 mt-1">Log to <code class="text-slate-200">Table 5: purchases</code></div>
+          </div>
+
+          <div class="h-4 w-[2px] bg-slate-800" id="line-1"></div>
+
+          <!-- Node 2 -->
+          <div id="node-2" class="w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700" onclick="jumpToStep(2)">
+            <div class="text-[10px] uppercase font-mono text-blue-400 font-bold">Step 2: CC Lookup</div>
+            <div class="text-xs font-semibold mt-1">Check Table 1: credit_cards</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Validate active issuer parameters</div>
+          </div>
+
+          <div class="h-4 w-[2px] bg-slate-800" id="line-2"></div>
+
+          <!-- Node 3 -->
+          <div id="node-3" class="w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700" onclick="jumpToStep(3)">
+            <div class="text-[10px] uppercase font-mono text-blue-400 font-bold">Step 3: Directory Mapping</div>
+            <div class="text-xs font-semibold mt-1">Check Table 2: db_category</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Map merchant metadata category</div>
+          </div>
+
+          <div class="h-4 w-[2px] bg-slate-800" id="line-3"></div>
+
+          <!-- Node 4 (Previously Step 7) -->
+          <div id="node-4" class="w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700" onclick="jumpToStep(4)">
+            <div class="text-[10px] uppercase font-mono text-blue-400 font-bold">Step 4: Evergreen Rates</div>
+            <div class="text-xs font-semibold mt-1">Table 3 Static Lookup</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Load permanent profile rate %</div>
+          </div>
+
+          <div class="h-4 w-[2px] bg-slate-800" id="line-4"></div>
+
+          <!-- Node 5 (Previously Step 8) -->
+          <div id="node-5" class="w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700" onclick="jumpToStep(5)">
+            <div class="text-[10px] uppercase font-mono text-emerald-400 font-bold">Step 5: Compute Core</div>
+            <div class="text-xs font-semibold mt-1">Reward Computed & Mapped</div>
+            <div class="text-[10px] text-slate-400 mt-0.5 font-mono">Points = Amount * Static_Rate</div>
+          </div>
+
+          <div class="h-4 w-[2px] bg-slate-800" id="line-5"></div>
+
+          <!-- Node 6 (Previously Step 9) -->
+          <div id="node-6" class="w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700" onclick="jumpToStep(6)">
+            <div class="text-[10px] uppercase font-mono text-indigo-400 font-bold">Step 6: Sweep Audit</div>
+            <div class="text-xs font-semibold mt-1">Scan Whole Wallet Max Rate</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Scans Table 3 for higher yields</div>
+          </div>
+
+          <div class="h-4 w-[2px] bg-slate-800" id="line-6"></div>
+
+          <!-- Node 7 (Previously Step 10) -->
+          <div id="node-7" class="w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700" onclick="jumpToStep(7)">
+            <div class="text-[10px] uppercase font-mono text-indigo-400 font-bold">Step 7: Routing Decision</div>
+            <div class="text-xs font-semibold mt-1">Evaluate Optimal Usage</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Send alert if swipe was sub-optimal</div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: Decoupled Module Block (Pulled to the side) -->
+        <div class="w-80 flex flex-col justify-center">
+          <div class="border-2 border-dashed border-amber-500/30 bg-amber-950/5 rounded-2xl p-4 space-y-4 relative">
+            <div class="absolute -top-3 left-4 bg-slate-950 px-3 text-xs font-bold text-amber-500 tracking-wider uppercase border border-amber-500/30 rounded-full">
+              Decoupled Sandbox Module
+            </div>
+            
+            <p class="text-[11px] text-slate-400 leading-relaxed pt-1">
+              The promotional bonuses check from <strong>Table 4 (`promotion_bonuses`)</strong> is decoupled from the transaction loop to ensure ultra-low processing latency.
+            </p>
+
+            <div class="border border-slate-800 rounded-lg p-2 bg-slate-950/40 text-center">
+              <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ad-hoc Lookup Track</span>
+            </div>
+
+            <!-- Decoupled Node A -->
+            <div id="node-promo-1" class="w-full bg-slate-900/40 border-2 border-slate-800/80 rounded-xl p-3 text-center transition-all duration-300 cursor-pointer hover:border-amber-500/30" onclick="jumpToPromoStep('promo-1')">
+              <div class="text-[10px] uppercase font-mono text-amber-500 font-bold">Module A: Table 4 Check</div>
+              <div class="text-xs font-semibold mt-1">Query Campaign Codes</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Fetch active high-yield overlays</div>
+            </div>
+
+            <!-- Decoupled Node B -->
+            <div id="node-promo-2" class="w-full bg-slate-900/40 border-2 border-slate-800/80 rounded-xl p-3 text-center transition-all duration-300 cursor-pointer hover:border-amber-500/30" onclick="jumpToPromoStep('promo-2')">
+              <div class="text-[10px] uppercase font-mono text-amber-500 font-bold">Module B: Range check</div>
+              <div class="text-xs font-semibold mt-1">Evaluate expiration_date</div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Verify if purchase date is within bounds</div>
+            </div>
+
+            <div class="text-[10px] text-slate-500 text-center italic">
+              * Click either module above to inspect sandbox parameters.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Live Inspector Pane (Right Panel) -->
+    <div class="w-full lg:w-96 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col shrink-0 z-10 overflow-hidden">
+      
+      <!-- Panel Title -->
+      <div class="bg-slate-950 border-b border-slate-800 px-5 py-3 flex justify-between items-center shrink-0">
+        <span class="text-xs font-bold text-slate-300 tracking-wider uppercase">Active Diagnostic Engine</span>
+        <span id="current-step-badge" class="bg-slate-800 text-slate-400 font-mono text-[10px] px-2 py-0.5 rounded font-bold">Step 0 / 7</span>
+      </div>
+
+      <!-- Main Step-by-Step Details Frame -->
+      <div class="flex-1 overflow-y-auto p-5 space-y-6">
+        
+        <!-- Step Summary Card -->
+        <div id="inspector-step-card" class="bg-slate-950/40 border border-slate-800 rounded-xl p-4 space-y-3">
+          <div class="flex justify-between items-start">
+            <div id="inspector-badge" class="bg-blue-900/30 border border-blue-800 text-blue-400 font-mono text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider">
+              READY
+            </div>
+            <div id="inspector-state" class="text-slate-500 font-mono text-[11px]">Core Fast-Path Active</div>
+          </div>
+          <h2 id="inspector-title" class="text-base font-bold text-slate-100">Audit Engine Ready</h2>
+          <p id="inspector-description" class="text-xs text-slate-400 leading-relaxed">
+            Select parameters in the settings bar and click **Auto Play Flow** or step through each core stage manually to audit the decoupled database transaction flow.
+          </p>
+        </div>
+
+        <!-- State Inspector Variables -->
+        <div class="space-y-3">
+          <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Transaction Memory</h3>
+          <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 space-y-2.5 font-mono text-[11px]">
+            <div class="flex justify-between border-b border-slate-900 pb-1.5">
+              <span class="text-slate-500">CCID Swiped:</span>
+              <span id="mem-ccid" class="text-slate-300">Unloaded</span>
+            </div>
+            <div class="flex justify-between border-b border-slate-900 pb-1.5">
+              <span class="text-slate-500">Category Mapped:</span>
+              <span id="mem-category" class="text-slate-300">Unloaded</span>
+            </div>
+            <div class="flex justify-between border-b border-slate-900 pb-1.5">
+              <span class="text-slate-500">Evergreen Rate (Table 3):</span>
+              <span id="mem-static-rate" class="text-slate-300">Checking...</span>
+            </div>
+            <div class="flex justify-between border-b border-slate-900 pb-1.5">
+              <span class="text-slate-500">Final Calculated Rate:</span>
+              <span id="mem-final-rate" class="text-emerald-400 font-bold">--</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Max System Rate:</span>
+              <span id="mem-max-rate" class="text-pink-400">Checking...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Query Trace / Code Box -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Executed SQL Command</h3>
+            <span class="text-[9px] bg-slate-800 text-slate-400 font-mono px-1.5 py-0.5 rounded">PostgreSQL</span>
+          </div>
+          <div class="bg-slate-950 rounded-xl border border-slate-800 p-3.5 overflow-x-auto">
+            <pre id="query-trace-block" class="text-[11px] font-mono text-blue-400 leading-relaxed whitespace-pre-wrap">-- Waiting for core process flow simulation trace...</pre>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Steps Footer Controller -->
+      <div class="bg-slate-950 border-t border-slate-800 p-4 flex items-center justify-between gap-3 shrink-0">
+        <button onclick="prevStep()" class="flex-1 flex items-center justify-center gap-1 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold transition-colors">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev Step
+        </button>
+        <button onclick="nextStep()" class="flex-1 flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all">
+          Next Step <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Engine Database Mock Data representing streamlined relationship mappings
+    const mockDatabase = {
+      cards: {
+        chase_sapphire: { id: "CHASE_SP", name: "Chase Sapphire Preferred", static: { Dining: 3.0, Travel: 2.0, Groceries: 1.0 }, promo: { Dining: "5.0", isExpired: false } },
+        amex_gold: { id: "AMEX_GOLD", name: "Amex Gold Card", static: { Dining: 4.0, Travel: 1.0, Groceries: 4.0 }, promo: { Travel: "2.0", isExpired: true } }
+      }
+    };
+
+    // Current State Variables
+    let currentStep = 0;
+    let autoPlayInterval = null;
+    let currentScenario = {};
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      initiateScenario();
+    });
+
+    // Parse values from inputs and build fast-path testing payload
+    function initiateScenario() {
+      resetFlow();
+      const cardKey = document.getElementById('scenario-card').value;
+      const catKey = document.getElementById('scenario-cat').value;
+
+      const card = mockDatabase.cards[cardKey];
+      
+      // Calculate overall system peak static rate for this category
+      let highestStaticInSystem = 1.0;
+      Object.keys(mockDatabase.cards).forEach(key => {
+        const rate = mockDatabase.cards[key].static[catKey] || 1.0;
+        if (rate > highestStaticInSystem) highestStaticInSystem = rate;
+      });
+
+      currentScenario = {
+        ccKey: cardKey,
+        ccid: card.id,
+        ccName: card.name,
+        category: catKey,
+        staticRate: card.static[catKey] || 1.0,
+        maxSystemRate: highestStaticInSystem,
+        promoRateValue: card.promo[catKey] || "None",
+        isPromoExpired: card.promo.isExpired,
+        amount: 150.00
+      };
+
+      updateMemoryPanel();
+    }
+
+    // Update variables panel live
+    function updateMemoryPanel() {
+      document.getElementById('mem-ccid').textContent = currentStep >= 1 ? currentScenario.ccid : "Unloaded";
+      document.getElementById('mem-category').textContent = currentStep >= 3 ? currentScenario.category : "Unloaded";
+      document.getElementById('mem-static-rate').textContent = currentStep >= 4 ? `${currentScenario.staticRate}%` : "Checking...";
+      
+      if (currentStep < 5) {
+        document.getElementById('mem-final-rate').textContent = "--";
+        document.getElementById('mem-final-rate').className = "text-slate-400";
+      } else {
+        document.getElementById('mem-final-rate').textContent = `${currentScenario.staticRate}%`;
+        document.getElementById('mem-final-rate').className = "text-emerald-400 font-bold";
+      }
+
+      document.getElementById('mem-max-rate').textContent = currentStep >= 6 ? `${currentScenario.maxSystemRate}%` : "Checking...";
+    }
+
+    // Interactive Step Details Mapping Object
+    const stepDefinitions = {
+      1: {
+        badge: "Ingestion",
+        state: "Writing raw swipe ledger...",
+        title: "Step 1: Write raw purchase transaction record",
+        desc: "A card is swiped at a merchant terminal. The database immediately writes a row to Table 5 (`purchases`) with a generated transaction ID, laying down the baseline audit trail before matching any bonus rules.",
+        query: (cs) => `INSERT INTO purchases (\n  purchase_id,\n  ccid,\n  promotion_category_id,\n  amount,\n  purchase_date\n) VALUES (\n  'TXN_98319',\n  '${cs.ccid}',\n  'CAT_${cs.category.toUpperCase().slice(0, 3)}',\n  150.00,\n  NOW()\n);`
+      },
+      2: {
+        badge: "CC Lookup",
+        state: "Querying account profiles...",
+        title: "Step 2: Table 1 Card Profile Query",
+        desc: "The compiler targets Table 1 (`credit_cards`) to ensure the user's swiped card is in active standing and validly provisioned in the database layout.",
+        query: (cs) => `SELECT\n  ccid,\n  cc_brand,\n  cc_name\nFROM credit_cards\nWHERE ccid = '${cs.ccid}';`
+      },
+      3: {
+        badge: "Classification",
+        state: "Resolving transaction category directory...",
+        title: "Step 3: Table 2 Merchant Class Map",
+        desc: "The transaction maps the raw merchant classification code to a structured directory Category ID in Table 2 (`promotion_categories`) to verify a recognizable spending category exists.",
+        query: (cs) => `SELECT\n  promotion_category_id,\n  db_category\nFROM promotion_categories\nWHERE promotion_category_id = 'CAT_${cs.category.toUpperCase().slice(0, 3)}';`
+      },
+      4: {
+        badge: "Static Yield",
+        state: "Retrieving permanent rates...",
+        title: "Step 4: Table 3 Evergreen Static Bonus Lookup",
+        desc: "Without running promotional lookup delays, the system retrieves standard permanent rewards values directly from Table 3 (`static_bonuses`) for the card swiped.",
+        query: (cs) => `SELECT\n  static_bonus_category,\n  static_bonus_percentage\nFROM static_bonuses\nWHERE ccid = '${cs.ccid}'\n  AND promotion_category_id = 'CAT_${cs.category.toUpperCase().slice(0, 3)}';`
+      },
+      5: {
+        badge: "Compute Core",
+        state: "Resolving rewards output...",
+        title: "Step 5: Compute reward totals",
+        desc: "The math processor resolves the reward values. The calculation runs off the standard evergreen percentage mapping loaded in the previous step.",
+        query: (cs) => `-- Compute Core:\n-- Purchase Amount: $${cs.amount.toFixed(2)}\n-- Evergreen Rate: ${cs.staticRate}%\n\nSELECT (${cs.amount} * ${cs.staticRate / 100}) AS rewards_calculated;`
+      },
+      6: {
+        badge: "Cross-Wallet Scan",
+        state: "Searching for category maximums...",
+        title: "Step 6: Table 3 Cross-Card Maximizer Scan",
+        desc: "The background auditor sweeps the entire static bonus table across *all registered portfolio accounts* for this specific category, identifying the highest available evergreen multiplier rate.",
+        query: (cs) => `SELECT\n  MAX(static_bonus_percentage) as highest_possible_rate,\n  ccid as best_matching_card\nFROM static_bonuses\nWHERE promotion_category_id = 'CAT_${cs.category.toUpperCase().slice(0, 3)}'\nGROUP BY ccid\nORDER BY highest_possible_rate DESC;`
+      },
+      7: {
+        badge: "Decision Routing",
+        state: "Evaluating Optimization Rules...",
+        title: "Step 7: Analyze swipe optimization & alert rules",
+        desc: "The calculated yield is checked against the category-wide system maximum. If a sub-optimal card was swiped, the system generates a push recommendation recommendation.",
+        query: (cs) => {
+          const isOptimal = cs.staticRate >= cs.maxSystemRate;
+          if (isOptimal) {
+            return `-- AUDIT COMPLETED: [OPTIMAL_CARD]\n-- Card rate (${cs.staticRate}%) matches highest static system rate (${cs.maxSystemRate}%).\n-- Action: SILENT_PASS (Audit clear)`;
+          } else {
+            return `-- AUDIT COMPLETED: [SUB_OPTIMAL_CARD]\n-- Swiped Card yielded ${cs.staticRate}% but a higher ${cs.maxSystemRate}% was available!\n-- Action: EMIT_OPTIMIZATION_PUSH_ALERT\n-- Notification payload: 'Optimization Tip: Swiping your other card on ${cs.category} would earn you more!'`;
+          }
+        }
+      }
+    };
+
+    // Rendering core step progress functions
+    function renderStep() {
+      // Clear previous classes
+      for (let i = 1; i <= 7; i++) {
+        const node = document.getElementById(`node-${i}`);
+        if (node) {
+          node.className = "w-full bg-slate-900 border-2 border-slate-800 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer hover:border-slate-700";
+        }
+      }
+      
+      // Clear decoupled modules highlight
+      document.getElementById('node-promo-1').className = "w-full bg-slate-900/40 border-2 border-slate-800/80 rounded-xl p-3 text-center transition-all duration-300 cursor-pointer hover:border-amber-500/30";
+      document.getElementById('node-promo-2').className = "w-full bg-slate-900/40 border-2 border-slate-800/80 rounded-xl p-3 text-center transition-all duration-300 cursor-pointer hover:border-amber-500/30";
+
+      if (currentStep === 0) {
+        document.getElementById('current-step-badge').textContent = "Step 0 / 7";
+        document.getElementById('inspector-badge').className = "bg-slate-900/30 border border-slate-800 text-slate-400 font-mono text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider";
+        document.getElementById('inspector-badge').textContent = "READY";
+        document.getElementById('inspector-state').textContent = "Ready to process swipe";
+        document.getElementById('inspector-title').textContent = "Core Fast-Path Ready";
+        document.getElementById('inspector-description').textContent = "Select parameters in the settings bar and click **Auto Play Flow** or step through each core stage manually to audit the decoupled database transaction flow.";
+        document.getElementById('query-trace-block').textContent = "-- Waiting for core process flow simulation trace...";
+        updateMemoryPanel();
+        return;
+      }
+
+      // Check if viewing sandbox steps
+      if (typeof currentStep === 'string') {
+        renderPromoStep(currentStep);
+        return;
+      }
+
+      document.getElementById('current-step-badge').textContent = `Step ${currentStep} / 7`;
+      
+      const stepData = stepDefinitions[currentStep];
+      const inspectorBadge = document.getElementById('inspector-badge');
+      
+      // Update Inspector Panel Content
+      document.getElementById('inspector-state').textContent = stepData.state;
+      document.getElementById('inspector-title').textContent = stepData.title;
+      document.getElementById('inspector-description').textContent = stepData.desc;
+      document.getElementById('query-trace-block').textContent = stepData.query(currentScenario);
+
+      // Node style evaluation highlighting active nodes
+      const activeNode = document.getElementById(`node-${currentStep}`);
+      if (activeNode) {
+        if (currentStep === 7) {
+          const isOptimal = currentScenario.staticRate >= currentScenario.maxSystemRate;
+          if (isOptimal) {
+            activeNode.className = "w-full bg-slate-900 border-2 border-emerald-500 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer transform scale-105 node-success";
+            inspectorBadge.className = "bg-emerald-950 border border-emerald-800 text-emerald-400 font-mono text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider";
+            inspectorBadge.textContent = "OPTIMAL";
+          } else {
+            activeNode.className = "w-full bg-slate-900 border-2 border-rose-500 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer transform scale-105 node-alert animate-pulse";
+            inspectorBadge.className = "bg-rose-950 border border-rose-800 text-rose-400 font-mono text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider";
+            inspectorBadge.textContent = "MISMATCH WARNING";
+          }
+        } else {
+          activeNode.className = "w-full bg-slate-900 border-2 border-blue-500 rounded-xl p-3 text-center transition-all duration-300 z-10 cursor-pointer transform scale-105 node-active";
+          inspectorBadge.className = "bg-blue-900/30 border border-blue-800 text-blue-400 font-mono text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider";
+          inspectorBadge.textContent = stepData.badge.toUpperCase();
+        }
+      }
+
+      // Highlight previous completed nodes
+      for (let i = 1; i < currentStep; i++) {
+        const prevNode = document.getElementById(`node-${i}`);
+        if (prevNode) {
+          prevNode.className = "w-full bg-slate-900/40 border-2 border-slate-700/60 rounded-xl p-3 text-center opacity-70 transition-all duration-300 z-10 cursor-pointer";
+        }
+      }
+
+      updateMemoryPanel();
+    }
+
+    // Handles decoupled module visual clicks
+    function jumpToPromoStep(type) {
+      stopAutoPlay();
+      currentStep = type;
+      renderStep();
+    }
+
+    function renderPromoStep(type) {
+      document.getElementById('current-step-badge').textContent = "Decoupled Inspection";
+      const inspectorBadge = document.getElementById('inspector-badge');
+      inspectorBadge.className = "bg-amber-950 border border-amber-800 text-amber-400 font-mono text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider";
+      inspectorBadge.textContent = "DECOUPLED SANDBOX";
+
+      if (type === 'promo-1') {
+        document.getElementById('node-promo-1').className = "w-full bg-slate-900 border-2 border-amber-500 rounded-xl p-3 text-center transition-all duration-300 cursor-pointer transform scale-105 node-decoupled";
+        document.getElementById('inspector-state').textContent = "Asynchronous Sandbox Read...";
+        document.getElementById('inspector-title').textContent = "Module A: Table 4 Campaign Code Query";
+        document.getElementById('inspector-description').textContent = "This query scans Table 4 (`promotion_bonuses`) for potential active campaign entries, completely parallel and decoupled from the main transaction path to reduce swipe latency.";
+        document.getElementById('query-trace-block').textContent = `SELECT\n  promotion_bonus,\n  expiration_date\nFROM promotion_bonuses\nWHERE ccid = '${currentScenario.ccid}'\n  AND promotion_category_id = 'CAT_${currentScenario.category.toUpperCase().slice(0, 3)}';\n\n-- Sandbox Yield Value found: [${currentScenario.promoRateValue === 'None' ? 'None Listed' : currentScenario.promoRateValue + ' Multiplier'}]`;
+      } else {
+        document.getElementById('node-promo-2').className = "w-full bg-slate-900 border-2 border-amber-500 rounded-xl p-3 text-center transition-all duration-300 cursor-pointer transform scale-105 node-decoupled";
+        document.getElementById('inspector-state').textContent = "Evaluating Expiration Limits...";
+        document.getElementById('inspector-title').textContent = "Module B: Timestamp Range Validation";
+        document.getElementById('inspector-description').textContent = "Compares transaction logs with the retrieved campaign's expiration date. It confirms the campaign parameters are valid before calculating ad-hoc marketing reports.";
+        
+        const isExpiredText = currentScenario.isPromoExpired ? 'EXPIRED' : 'ACTIVE';
+        document.getElementById('query-trace-block').textContent = `-- Check range constraints:\n-- Expiration configured: '2026-10-31'\nSELECT (NOW() <= '2026-10-31'::TIMESTAMP) as is_valid;\n\n-- Calculation Status: [Campaign state evaluated as ${isExpiredText}]`;
+      }
+    }
+
+    // Step Increment Logic
+    function nextStep() {
+      if (typeof currentStep === 'string') {
+        currentStep = 1;
+      } else if (currentStep < 7) {
+        currentStep++;
+      } else {
+        stopAutoPlay();
+      }
+      renderStep();
+    }
+
+    // Step Decrement Logic
+    function prevStep() {
+      if (typeof currentStep === 'string') {
+        currentStep = 1;
+      } else if (currentStep > 0) {
+        currentStep--;
+      }
+      renderStep();
+    }
+
+    // Flow Jumper
+    function jumpToStep(stepNum) {
+      stopAutoPlay();
+      currentStep = stepNum;
+      renderStep();
+    }
+
+    // Full Reset
+    function resetFlow() {
+      stopAutoPlay();
+      currentStep = 0;
+      renderStep();
+    }
+
+    // Timer Auto Run Pipeline
+    function toggleAutoPlay() {
+      if (autoPlayInterval) {
+        stopAutoPlay();
+      } else {
+        document.getElementById('play-icon').setAttribute('data-lucide', 'pause');
+        document.getElementById('play-text').textContent = "Pause Flow";
+        document.getElementById('play-btn').className = "flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all";
+        lucide.createIcons();
+        
+        if (currentStep >= 7 || typeof currentStep === 'string') currentStep = 0;
+
+        autoPlayInterval = setInterval(() => {
+          if (currentStep < 7) {
+            currentStep++;
+            renderStep();
+          } else {
+            stopAutoPlay();
+          }
+        }, 1500);
+      }
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+        autoPlayInterval = null;
+      }
+      document.getElementById('play-icon').setAttribute('data-lucide', 'play');
+      document.getElementById('play-text').textContent = "Auto Play Flow";
+      document.getElementById('play-btn').className = "flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md shadow-blue-500/10";
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

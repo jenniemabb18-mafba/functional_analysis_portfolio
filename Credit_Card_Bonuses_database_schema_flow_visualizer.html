@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Schema & Flow Visualizer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .canvas-bg {
+      background-size: 20px 20px;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    }
+    .draggable-card {
+      touch-action: none;
+      cursor: grab;
+    }
+    .draggable-card:active {
+      cursor: grabbing;
+    }
+    /* Simple custom scrollbar for dark UI */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    @keyframes pulse-flow {
+      0% { stroke-dashoffset: 24; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .pulse-line {
+      stroke-dasharray: 8, 4;
+      animation: pulse-flow 1s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans overflow-hidden">
+
+  <!-- Header -->
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 z-10 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="bg-indigo-600 text-white p-2 rounded-lg shadow-md shadow-indigo-500/20">
+        <i data-lucide="database" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight">CC Rewards System</h1>
+        <p class="text-xs text-slate-400">Interactive Schema Visualizer & Data Flow Simulator</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <button onclick="resetLayout()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-3.5 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-700">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        Reset Layout
+      </button>
+      <button onclick="startSimulation()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md shadow-emerald-500/10">
+        <i data-lucide="play" class="w-4 h-4"></i>
+        Run Reward Query Flow
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="flex-1 flex flex-col lg:flex-row relative overflow-hidden">
+    
+    <!-- Canvas Area (Left/Center) -->
+    <div class="flex-1 relative overflow-hidden flex flex-col">
+      <!-- Toolbar / Canvas Legend -->
+      <div class="absolute top-4 left-4 bg-slate-900/95 backdrop-blur-md border border-slate-800/80 rounded-xl px-4 py-3 shadow-xl z-20 text-xs flex flex-wrap items-center gap-4">
+        <span class="text-slate-400 font-medium">Relationships:</span>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3.5 h-1 bg-indigo-500 rounded"></span>
+          <span class="text-slate-200">1 : N (One-to-Many)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3.5 h-1 bg-pink-500 rounded"></span>
+          <span class="text-slate-200">1 : 1 (One-to-One)</span>
+        </div>
+        <div class="h-4 w-[1px] bg-slate-800"></div>
+        <span class="text-slate-500">💡 Drag tables to rearrange connections!</span>
+      </div>
+
+      <!-- Drag Constraints Workspace -->
+      <div id="canvas-container" class="flex-1 relative canvas-bg overflow-hidden select-none">
+        
+        <!-- SVG Connections Layer -->
+        <svg id="connections-svg" class="absolute inset-0 pointer-events-none w-full h-full z-0">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="context-stroke" />
+            </marker>
+          </defs>
+        </svg>
+
+        <!-- TABLE 1: Credit Cards -->
+        <div id="table-1" class="draggable-card absolute bg-slate-900 border-2 border-slate-800 hover:border-slate-700 rounded-xl shadow-2xl w-72 z-10 transition-all duration-200">
+          <div class="bg-slate-950 px-4 py-3 rounded-t-xl border-b border-slate-800 flex items-center justify-between handle">
+            <div class="flex items-center gap-2">
+              <i data-lucide="credit-card" class="w-4 h-4 text-indigo-400"></i>
+              <span class="font-bold text-sm text-slate-100">Table 1: credit_cards</span>
+            </div>
+            <span class="bg-indigo-900/40 text-indigo-300 text-[10px] font-bold px-1.5 py-0.5 rounded">Primary Entity</span>
+          </div>
+          <div class="p-3 text-xs space-y-2">
+            <!-- Key Fields -->
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/50 border border-indigo-500/30">
+              <div class="flex items-center gap-2">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-yellow-500"></i>
+                <span class="font-semibold text-slate-200">CCID</span>
+              </div>
+              <span class="text-indigo-400 font-mono text-[10px]">PK | VARCHAR</span>
+            </div>
+            <!-- Regular Fields -->
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">CC Brand</span>
+              <span class="text-slate-500 font-mono text-[10px]">VARCHAR</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">CC Name</span>
+              <span class="text-slate-500 font-mono text-[10px]">VARCHAR</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">Static Bonus Link</span>
+              <span class="text-slate-500 font-mono text-[10px]">VARCHAR / URL</span>
+            </div>
+          </div>
+          <!-- Maintenance Badge Footer -->
+          <div class="px-4 py-2 rounded-b-xl border-t border-slate-800/60 bg-slate-950/40 flex items-center justify-between text-[10px]">
+            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Track:</span>
+            <span class="text-slate-400 font-medium">Ad-Hoc Updates</span>
+          </div>
+        </div>
+
+        <!-- TABLE 3: Static Bonuses -->
+        <div id="table-3" class="draggable-card absolute bg-slate-900 border-2 border-slate-800 hover:border-slate-700 rounded-xl shadow-2xl w-72 z-10 transition-all duration-200">
+          <div class="bg-slate-950 px-4 py-3 rounded-t-xl border-b border-slate-800 flex items-center justify-between handle">
+            <div class="flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+              <span class="font-bold text-sm text-slate-100">Table 3: static_bonuses</span>
+            </div>
+            <span class="bg-slate-800 text-slate-400 text-[10px] font-bold px-1.5 py-0.5 rounded">Evergreen</span>
+          </div>
+          <div class="p-3 text-xs space-y-2">
+            <!-- Key Field 1 -->
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/50 border border-slate-800">
+              <div class="flex items-center gap-2">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-yellow-500"></i>
+                <span class="font-semibold text-slate-200">Static_Bonus_ID</span>
+              </div>
+              <span class="text-slate-400 font-mono text-[10px]">PK | VARCHAR</span>
+            </div>
+            <!-- Foreign Key 1 -->
+            <div class="flex items-center justify-between p-2 rounded bg-indigo-950/30 border border-indigo-500/20">
+              <div class="flex items-center gap-2">
+                <i data-lucide="link" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <span class="font-semibold text-indigo-300">CCID</span>
+              </div>
+              <span class="text-indigo-400 font-mono text-[10px]">FK | VARCHAR</span>
+            </div>
+            <!-- Regular Fields -->
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">Static Bonus Category</span>
+              <span class="text-slate-500 font-mono text-[10px]">VARCHAR</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">Static Bonus %</span>
+              <span class="text-slate-500 font-mono text-[10px]">FLOAT</span>
+            </div>
+            <!-- Foreign Key 2 -->
+            <div class="flex items-center justify-between p-2 rounded bg-pink-950/30 border border-pink-500/20">
+              <div class="flex items-center gap-2">
+                <i data-lucide="link" class="w-3.5 h-3.5 text-pink-400"></i>
+                <span class="font-semibold text-pink-300">Promotion_Category_ID</span>
+              </div>
+              <span class="text-pink-400 font-mono text-[10px]">FK | VARCHAR</span>
+            </div>
+          </div>
+          <!-- Maintenance Badge Footer -->
+          <div class="px-4 py-2 rounded-b-xl border-t border-slate-800/60 bg-slate-950/40 flex items-center justify-between text-[10px]">
+            <span class="text-slate-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Track:</span>
+            <span class="text-slate-400 font-medium">Issuer Specific / Ad-Hoc</span>
+          </div>
+        </div>
+
+        <!-- TABLE 4: Promotion Bonuses -->
+        <div id="table-4" class="draggable-card absolute bg-slate-900 border-2 border-slate-800 hover:border-slate-700 rounded-xl shadow-2xl w-72 z-10 transition-all duration-200">
+          <div class="bg-slate-950 px-4 py-3 rounded-t-xl border-b border-slate-800 flex items-center justify-between handle">
+            <div class="flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+              <span class="font-bold text-sm text-slate-100">Table 4: promotion_bonuses</span>
+            </div>
+            <span class="bg-amber-950/40 text-amber-300 text-[10px] font-bold px-1.5 py-0.5 rounded">Campaign</span>
+          </div>
+          <div class="p-3 text-xs space-y-2">
+            <!-- Key Field 1 -->
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/50 border border-slate-800">
+              <div class="flex items-center gap-2">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-yellow-500"></i>
+                <span class="font-semibold text-slate-200">Promotion_Bonus_ID</span>
+              </div>
+              <span class="text-slate-400 font-mono text-[10px]">PK | VARCHAR</span>
+            </div>
+            <!-- Foreign Key 1 -->
+            <div class="flex items-center justify-between p-2 rounded bg-indigo-950/30 border border-indigo-500/20">
+              <div class="flex items-center gap-2">
+                <i data-lucide="link" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <span class="font-semibold text-indigo-300">CCID</span>
+              </div>
+              <span class="text-indigo-400 font-mono text-[10px]">FK | VARCHAR</span>
+            </div>
+            <!-- Regular Fields -->
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">Promotion Bonus</span>
+              <span class="text-slate-500 font-mono text-[10px]">VARCHAR</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">Expiration Date</span>
+              <span class="text-slate-500 font-mono text-[10px]">DATE</span>
+            </div>
+            <!-- Foreign Key 2 -->
+            <div class="flex items-center justify-between p-2 rounded bg-pink-950/30 border border-pink-500/20">
+              <div class="flex items-center gap-2">
+                <i data-lucide="link" class="w-3.5 h-3.5 text-pink-400"></i>
+                <span class="font-semibold text-pink-300">Promotion_Category_ID</span>
+              </div>
+              <span class="text-pink-400 font-mono text-[10px]">FK | VARCHAR</span>
+            </div>
+          </div>
+          <!-- Maintenance Badge Footer -->
+          <div class="px-4 py-2 rounded-b-xl border-t border-slate-800/60 bg-amber-950/15 flex items-center justify-between text-[10px]">
+            <span class="text-amber-500/80 flex items-center gap-1 font-semibold"><i data-lucide="calendar-range" class="w-3.5 h-3.5"></i> Track:</span>
+            <span class="text-amber-300 font-bold tracking-wide uppercase text-[9px]">Monthly Audit</span>
+          </div>
+        </div>
+
+        <!-- TABLE 2: Promotion Categories -->
+        <div id="table-2" class="draggable-card absolute bg-slate-900 border-2 border-slate-800 hover:border-slate-700 rounded-xl shadow-2xl w-72 z-10 transition-all duration-200">
+          <div class="bg-slate-950 px-4 py-3 rounded-t-xl border-b border-slate-800 flex items-center justify-between handle">
+            <div class="flex items-center gap-2">
+              <i data-lucide="tag" class="w-4 h-4 text-pink-400"></i>
+              <span class="font-bold text-sm text-slate-100">Table 2: promotion_categories</span>
+            </div>
+            <span class="bg-pink-900/40 text-pink-300 text-[10px] font-bold px-1.5 py-0.5 rounded">Directory</span>
+          </div>
+          <div class="p-3 text-xs space-y-2">
+            <!-- Key Field 1 -->
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/50 border border-pink-500/30">
+              <div class="flex items-center gap-2">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-yellow-500"></i>
+                <span class="font-semibold text-slate-200">Promotion_Category_ID</span>
+              </div>
+              <span class="text-pink-400 font-mono text-[10px]">PK | VARCHAR</span>
+            </div>
+            <!-- Regular Fields -->
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">db category</span>
+              <span class="text-slate-500 font-mono text-[10px]">VARCHAR</span>
+            </div>
+          </div>
+          <!-- Maintenance Badge Footer -->
+          <div class="px-4 py-2 rounded-b-xl border-t border-slate-800/60 bg-pink-950/15 flex items-center justify-between text-[10px]">
+            <span class="text-pink-400/80 flex items-center gap-1 font-semibold"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Track:</span>
+            <span class="text-pink-300 font-bold tracking-wide uppercase text-[9px]">Yearly Audit</span>
+          </div>
+        </div>
+
+        <!-- TABLE 5: Purchases -->
+        <div id="table-5" class="draggable-card absolute bg-slate-900 border-2 border-slate-800 hover:border-slate-700 rounded-xl shadow-2xl w-72 z-10 transition-all duration-200">
+          <div class="bg-slate-950 px-4 py-3 rounded-t-xl border-b border-slate-800 flex items-center justify-between handle">
+            <div class="flex items-center gap-2">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-sky-400"></i>
+              <span class="font-bold text-sm text-slate-100">Table 5: purchases</span>
+            </div>
+            <span class="bg-sky-950/40 text-sky-300 text-[10px] font-bold px-1.5 py-0.5 rounded">Transactions</span>
+          </div>
+          <div class="p-3 text-xs space-y-2">
+            <!-- Key Field 1 -->
+            <div class="flex items-center justify-between p-2 rounded bg-slate-950/50 border border-slate-800">
+              <div class="flex items-center gap-2">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-yellow-500"></i>
+                <span class="font-semibold text-slate-200">Purchase_ID</span>
+              </div>
+              <span class="text-slate-400 font-mono text-[10px]">PK | VARCHAR</span>
+            </div>
+            <!-- Foreign Key 1 -->
+            <div class="flex items-center justify-between p-2 rounded bg-indigo-950/30 border border-indigo-500/20">
+              <div class="flex items-center gap-2">
+                <i data-lucide="link" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <span class="font-semibold text-indigo-300">CCID</span>
+              </div>
+              <span class="text-indigo-400 font-mono text-[10px]">FK | VARCHAR</span>
+            </div>
+            <!-- Foreign Key 2 -->
+            <div class="flex items-center justify-between p-2 rounded bg-pink-950/30 border border-pink-500/20">
+              <div class="flex items-center gap-2">
+                <i data-lucide="link" class="w-3.5 h-3.5 text-pink-400"></i>
+                <span class="font-semibold text-pink-300">Promotion_Category_ID</span>
+              </div>
+              <span class="text-pink-400 font-mono text-[10px]">FK | VARCHAR</span>
+            </div>
+            <!-- Regular Fields -->
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">Amount</span>
+              <span class="text-slate-500 font-mono text-[10px]">FLOAT</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded hover:bg-slate-800/40">
+              <span class="text-slate-300">Purchase Date</span>
+              <span class="text-slate-500 font-mono text-[10px]">DATETIME</span>
+            </div>
+          </div>
+          <!-- Maintenance Badge Footer -->
+          <div class="px-4 py-2 rounded-b-xl border-t border-slate-800/60 bg-sky-950/15 flex items-center justify-between text-[10px]">
+            <span class="text-sky-400/80 flex items-center gap-1 font-semibold"><i data-lucide="activity" class="w-3.5 h-3.5"></i> Track:</span>
+            <span class="text-sky-300 font-bold tracking-wide uppercase text-[9px]">Continuous Ledger</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right Flow Simulation & Details Panel -->
+    <div class="w-full lg:w-96 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col shrink-0 z-10">
+      
+      <!-- Panel Header Tabs -->
+      <div class="flex border-b border-slate-800 bg-slate-950">
+        <button class="flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wider text-indigo-400 border-b-2 border-indigo-500">
+          Interactive Flow
+        </button>
+      </div>
+
+      <!-- Panel Body Container -->
+      <div class="flex-1 overflow-y-auto p-5 space-y-6">
+        
+        <!-- Step Controller Card -->
+        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4 space-y-4">
+          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+            <i data-lucide="play" class="w-4 h-4 text-emerald-500"></i> Simulation Controller
+          </h3>
+          <p class="text-xs text-slate-400">Assemble a standard transaction swipe and trace its route.</p>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Choose Card used:</label>
+              <div class="relative">
+                <select id="sim-card-select" onchange="resetSimulationState()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 appearance-none">
+                  <option value="chase_sapphire">Chase Sapphire (CCID: CHASE_SP)</option>
+                  <option value="amex_gold">Amex Gold (CCID: AMEX_GOLD)</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                  <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Transaction Category:</label>
+              <div class="relative">
+                <select id="sim-cat-select" onchange="resetSimulationState()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-2 outline-none focus:border-indigo-500 appearance-none">
+                  <option value="CAT_DIN">Dining (e.g. Restaurants, Fast Food)</option>
+                  <option value="CAT_TRAV">Travel & Transit (e.g. Uber, Flights)</option>
+                  <option value="CAT_GROC">Groceries (e.g. US Supermarkets)</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                  <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Flow Indicator -->
+        <div class="space-y-4">
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Flow Sequence</h4>
+          
+          <div class="space-y-3">
+            <!-- Step 1 -->
+            <div id="step-card-1" class="flex gap-3 p-3 rounded-xl border border-slate-800/80 bg-slate-950/20 transition-all">
+              <div class="flex flex-col items-center">
+                <div id="step-badge-1" class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">1</div>
+                <div class="w-[1px] flex-1 bg-slate-800 my-1"></div>
+              </div>
+              <div class="flex-1">
+                <h5 class="text-xs font-bold text-slate-200">Log Swipe & Select Profile</h5>
+                <p class="text-[11px] text-slate-400 mt-0.5">Records the ledger trace in Table 5 (`purchases`) and validates credit profile in Table 1.</p>
+                <div class="mt-2 text-[10px] font-mono bg-slate-950 p-2 rounded text-indigo-400 hidden coding-snippet">
+                  INSERT INTO purchases (CCID, Promo_Category_ID, Amount, Purchase_Date) VALUES ('<span class="ccid-val">CHASE_SP</span>', '<span class="catid-val">CAT_DIN</span>', 100.00, NOW());
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="step-card-2" class="flex gap-3 p-3 rounded-xl border border-slate-800/80 bg-slate-950/20 transition-all">
+              <div class="flex flex-col items-center">
+                <div id="step-badge-2" class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">2</div>
+                <div class="w-[1px] flex-1 bg-slate-800 my-1"></div>
+              </div>
+              <div class="flex-1">
+                <h5 class="text-xs font-bold text-slate-200">Resolve Static & Promotional Lists</h5>
+                <p class="text-[11px] text-slate-400 mt-0.5">Fetches 1:N reward bonus entries mapped to this CCID (Table 3 & Table 4, evaluating active Expiration Dates).</p>
+                <div class="mt-2 text-[10px] font-mono bg-slate-950 p-2 rounded text-indigo-400 hidden coding-snippet">
+                  SELECT * FROM static_bonuses WHERE CCID = '<span class="ccid-val">CHASE_SP</span>';
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div id="step-card-3" class="flex gap-3 p-3 rounded-xl border border-slate-800/80 bg-slate-950/20 transition-all">
+              <div class="flex flex-col items-center">
+                <div id="step-badge-3" class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">3</div>
+                <div class="w-[1px] flex-1 bg-slate-800 my-1"></div>
+              </div>
+              <div class="flex-1">
+                <h5 class="text-xs font-bold text-slate-200">Map Category Directories</h5>
+                <p class="text-[11px] text-slate-400 mt-0.5">Resolves 1:1 foreign category identifiers to db system categories (Table 2).</p>
+                <div class="mt-2 text-[10px] font-mono bg-slate-950 p-2 rounded text-indigo-400 hidden coding-snippet">
+                  SELECT db_category FROM promotion_categories WHERE Promotion_Category_ID = '<span class="catid-val">CAT_DIN</span>';
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div id="step-card-4" class="flex gap-3 p-3 rounded-xl border border-slate-800/80 bg-slate-950/20 transition-all">
+              <div class="flex flex-col items-center">
+                <div id="step-badge-4" class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">4</div>
+              </div>
+              <div class="flex-1 space-y-2">
+                <h5 class="text-xs font-bold text-slate-200">Reward Optimization Audit</h5>
+                <p class="text-[11px] text-slate-400 mt-0.5">Compares used card's rate against other cards' static rates for this category.</p>
+                
+                <!-- Optimization Alerts Inject Container -->
+                <div id="audit-feedback" class="p-2.5 rounded-lg text-xs hidden border"></div>
+                
+                <div class="text-[10px] font-mono bg-slate-950 p-2 rounded text-indigo-400 hidden coding-snippet">
+                  -- Fetch highest rate available
+                  SELECT MAX(Static_Bonus_Percentage) FROM static_bonuses WHERE Promotion_Category_ID = '<span class="catid-val">CAT_DIN</span>';
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Rendered Flow Output Payload -->
+        <div id="payload-container" class="border border-slate-800 bg-slate-950 rounded-xl p-4 hidden">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Resolved Output payload
+            </span>
+            <span class="text-[10px] text-slate-500 font-mono">JSON</span>
+          </div>
+          <div id="resolved-json-out" class="text-[10px] font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-64">
+            <!-- Dynamically populated resolved JSON content -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JS Logic -->
+  <script>
+    // Initial standard position layouts for cards relative to canvas
+    const initialPositions = {
+      'table-1': { x: 50, y: 35 },
+      'table-5': { x: 50, y: 395 },
+      'table-3': { x: 420, y: 35 },
+      'table-4': { x: 420, y: 335 },
+      'table-2': { x: 790, y: 185 }
+    };
+
+    // Card coordinates state
+    let positions = JSON.parse(JSON.stringify(initialPositions));
+
+    // Card selection sample details database values
+    const mockCardDb = {
+      chase_sapphire: {
+        cc: { id: "CHASE_SP", brand: "Chase", name: "Sapphire Preferred", link: "https://chase.com/sapphire" },
+        static_bonuses: {
+          "CAT_DIN": 3.0,
+          "CAT_TRAV": 2.0,
+          "CAT_GROC": 1.0 // Base rate fallback
+        },
+        promo_bonuses: [
+          { id: "PB_CS_1", bonus: "5x Points", expirationDate: "2026-10-31", catId: "CAT_DIN" }
+        ]
+      },
+      amex_gold: {
+        cc: { id: "AMEX_GOLD", brand: "American Express", name: "Gold Card", link: "https://amex.com/gold" },
+        static_bonuses: {
+          "CAT_DIN": 4.0,
+          "CAT_TRAV": 1.0, // Base rate fallback
+          "CAT_GROC": 4.0
+        },
+        promo_bonuses: [
+          { id: "PB_AG_1", bonus: "2x Points", expirationDate: "2026-11-30", catId: "CAT_TRAV" }
+        ]
+      }
+    };
+
+    const categoryLabels = {
+      "CAT_DIN": "Dining",
+      "CAT_TRAV": "Travel & Transit",
+      "CAT_GROC": "Groceries"
+    };
+
+    // Initialize Card Positions, Drag Event Listeners and Connections
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      applyPositions();
+      drawConnections();
+      window.addEventListener('resize', () => drawConnections());
+      setupDraggables();
+    });
+
+    // Positions implementation
+    function applyPositions() {
+      Object.keys(positions).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.left = `${positions[id].x}px`;
+          el.style.top = `${positions[id].y}px`;
+        }
+      });
+    }
+
+    // Drag System Setup (Vanilla Physics/Coord calculation)
+    function setupDraggables() {
+      const cards = document.querySelectorAll('.draggable-card');
+      const canvas = document.getElementById('canvas-container');
+
+      cards.forEach(card => {
+        const handle = card.querySelector('.handle');
+        
+        handle.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          
+          // Elevate current active card index
+          cards.forEach(c => c.style.zIndex = "10");
+          card.style.zIndex = "30";
+
+          const rect = card.getBoundingClientRect();
+          const canvasRect = canvas.getBoundingClientRect();
+          
+          let shiftX = e.clientX - rect.left;
+          let shiftY = e.clientY - rect.top;
+
+          function moveAt(clientX, clientY) {
+            let left = clientX - canvasRect.left - shiftX;
+            let top = clientY - canvasRect.top - shiftY;
+
+            // Restrict movement within container dimensions
+            left = Math.max(0, Math.min(left, canvasRect.width - card.offsetWidth));
+            top = Math.max(0, Math.min(top, canvasRect.height - card.offsetHeight));
+
+            card.style.left = left + 'px';
+            card.style.top = top + 'px';
+
+            // Keep local state in sync
+            positions[card.id] = { x: left, y: top };
+            drawConnections();
+          }
+
+          function onMouseMove(moveEvent) {
+            moveAt(moveEvent.clientX, moveEvent.clientY);
+          }
+
+          document.addEventListener('mousemove', onMouseMove);
+
+          document.addEventListener('mouseup', () => {
+            document.removeEventListener('mousemove', onMouseMove);
+          }, { once: true });
+        });
+
+        // Touch event compatibility
+        handle.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          
+          cards.forEach(c => c.style.zIndex = "10");
+          card.style.zIndex = "30";
+
+          const rect = card.getBoundingClientRect();
+          const canvasRect = canvas.getBoundingClientRect();
+          const touch = e.touches[0];
+          
+          let shiftX = touch.clientX - rect.left;
+          let shiftY = touch.clientY - rect.top;
+
+          function onTouchMove(moveEvent) {
+            const touchMove = moveEvent.touches[0];
+            let left = touchMove.clientX - canvasRect.left - shiftX;
+            let top = touchMove.clientY - canvasRect.top - shiftY;
+
+            left = Math.max(0, Math.min(left, canvasRect.width - card.offsetWidth));
+            top = Math.max(0, Math.min(top, canvasRect.height - card.offsetHeight));
+
+            card.style.left = left + 'px';
+            card.style.top = top + 'px';
+
+            positions[card.id] = { x: left, y: top };
+            drawConnections();
+          }
+
+          document.addEventListener('touchmove', onTouchMove);
+
+          document.addEventListener('touchend', () => {
+            document.removeEventListener('touchmove', onTouchMove);
+          }, { once: true });
+        });
+      });
+    }
+
+    // Dynamic Connections Line Drawing Canvas API Wrapper
+    function drawConnections(activePaths = []) {
+      if (!Array.isArray(activePaths)) {
+        activePaths = [];
+      }
+
+      const svg = document.getElementById('connections-svg');
+      svg.innerHTML = ''; // Reset paths
+
+      // Define default database relation definitions mapping table elements
+      const relationships = [
+        { from: 'table-1', to: 'table-3', key: 'cc-static', type: '1-N', label: '1 : N', color: '#6366f1' },
+        { from: 'table-1', to: 'table-4', key: 'cc-promo', type: '1-N', label: '1 : N', color: '#6366f1' },
+        { from: 'table-3', to: 'table-2', key: 'static-cat', type: '1-1', label: '1 : 1', color: '#ec4899' },
+        { from: 'table-4', to: 'table-2', key: 'promo-cat', type: '1-1', label: '1 : 1', color: '#ec4899' },
+        
+        // Purchases Relationships
+        { from: 'table-1', to: 'table-5', key: 'cc-purchase', type: '1-N', label: '1 : N', color: '#6366f1' },
+        { from: 'table-2', to: 'table-5', key: 'cat-purchase', type: '1-N', label: '1 : N', color: '#6366f1' }
+      ];
+
+      const canvasRect = document.getElementById('canvas-container').getBoundingClientRect();
+
+      relationships.forEach(rel => {
+        const fromEl = document.getElementById(rel.from);
+        const toEl = document.getElementById(rel.to);
+        if (!fromEl || !toEl) return;
+
+        const r1 = fromEl.getBoundingClientRect();
+        const r2 = toEl.getBoundingClientRect();
+
+        // Bidirectional line alignment calculation
+        let x1, x2;
+        if (r1.left + r1.width / 2 < r2.left + r2.width / 2) {
+          x1 = r1.right - canvasRect.left;
+          x2 = r2.left - canvasRect.left;
+        } else {
+          x1 = r1.left - canvasRect.left;
+          x2 = r2.right - canvasRect.left;
+        }
+
+        const y1 = r1.top - canvasRect.top + (r1.height / 2);
+        const y2 = r2.top - canvasRect.top + (r2.height / 2);
+
+        // Calculate dynamic directional bezier bend coefficients 
+        const dx = x2 - x1;
+        const offset = Math.abs(dx) * 0.4;
+        const ctrlX1 = x1 + (dx > 0 ? offset : -offset);
+        const ctrlX2 = x2 - (dx > 0 ? offset : -offset);
+        const d = `M ${x1} ${y1} C ${ctrlX1} ${y1}, ${ctrlX2} ${y2}, ${x2} ${y2}`;
+
+        // Create Path Element
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        
+        // Active visual style logic
+        const isActive = activePaths.includes(rel.key);
+        const color = isActive ? '#10b981' : rel.color; // Mapped Emerald active state
+        
+        path.setAttribute('stroke', color);
+        path.setAttribute('stroke-width', isActive ? '4' : '2.5');
+        path.setAttribute('fill', 'none');
+        path.setAttribute('marker-end', 'url(#arrow)');
+        
+        if (isActive) {
+          path.setAttribute('class', 'pulse-line');
+        }
+
+        svg.appendChild(path);
+
+        // Midpoint relationship values badges
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2;
+
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', mx - 20);
+        rect.setAttribute('y', my - 10);
+        rect.setAttribute('width', 40);
+        rect.setAttribute('height', 20);
+        rect.setAttribute('rx', '5');
+        rect.setAttribute('fill', '#090d16');
+        rect.setAttribute('stroke', color);
+        rect.setAttribute('stroke-width', '1');
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', mx);
+        text.setAttribute('y', my + 4);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', isActive ? '#10b981' : '#f1f5f9');
+        text.setAttribute('font-size', '10px');
+        text.setAttribute('font-weight', 'bold');
+        text.textContent = rel.label;
+
+        group.appendChild(rect);
+        group.appendChild(text);
+        svg.appendChild(group);
+      });
+    }
+
+    // Reset layout coordinate positions wrapper function
+    function resetLayout() {
+      positions = JSON.parse(JSON.stringify(initialPositions));
+      applyPositions();
+      drawConnections();
+      resetSimulationState();
+    }
+
+    // Reset flow simulator styles
+    function resetSimulationState() {
+      // Reset borders & UI classes of cards
+      ['table-1', 'table-2', 'table-3', 'table-4', 'table-5'].forEach(id => {
+        const card = document.getElementById(id);
+        const defaultBorder = 'border-slate-800';
+        card.className = `draggable-card absolute bg-slate-900 border-2 ${defaultBorder} hover:border-slate-700 rounded-xl shadow-2xl w-72 z-10 transition-all duration-300`;
+      });
+
+      // Clear steps UI statuses
+      [1, 2, 3, 4].forEach(step => {
+        document.getElementById(`step-card-${step}`).className = "flex gap-3 p-3 rounded-xl border border-slate-800/80 bg-slate-950/20 transition-all";
+        document.getElementById(`step-badge-${step}`).className = "w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 transition-all";
+        document.getElementById(`step-card-${step}`).querySelector('.coding-snippet').classList.add('hidden');
+      });
+
+      // Clear Audit alerts UI
+      const auditBox = document.getElementById('audit-feedback');
+      auditBox.className = "p-2.5 rounded-lg text-xs hidden border";
+      auditBox.innerHTML = "";
+
+      document.getElementById('payload-container').classList.add('hidden');
+      drawConnections();
+    }
+
+    // Delayed Promise helper for animation sequences
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // MAIN SIMULATION SEQUENCE RUNNER
+    async function startSimulation() {
+      resetSimulationState();
+      
+      const activeCardKey = document.getElementById('sim-card-select').value;
+      const activeCategoryKey = document.getElementById('sim-cat-select').value;
+      
+      const cardData = mockCardDb[activeCardKey];
+      const categoryName = categoryLabels[activeCategoryKey];
+      
+      // Update code blocks with dynamic values
+      document.querySelectorAll('.ccid-val').forEach(el => el.textContent = cardData.cc.id);
+      document.querySelectorAll('.catid-val').forEach(el => el.textContent = activeCategoryKey);
+
+      // --- PHASE 1: Purchases Table 5 & Card Table 1 (Log Swipes) ---
+      drawConnections(['cc-purchase']);
+      document.getElementById('table-5').className = "draggable-card absolute bg-slate-900 border-2 border-emerald-500 hover:border-emerald-500 rounded-xl shadow-2xl shadow-emerald-500/10 w-72 z-20 transition-all duration-300 transform scale-[1.02]";
+      document.getElementById('table-1').className = "draggable-card absolute bg-slate-900 border-2 border-emerald-500 hover:border-emerald-500 rounded-xl shadow-2xl shadow-emerald-500/10 w-72 z-20 transition-all duration-300 transform scale-[1.02]";
+      
+      document.getElementById('step-card-1').className = "flex gap-3 p-3 rounded-xl border border-emerald-500/40 bg-emerald-950/10 transition-all";
+      document.getElementById('step-badge-1').className = "w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-slate-950 transition-all shadow-md shadow-emerald-500/20";
+      document.getElementById('step-card-1').querySelector('.coding-snippet').classList.remove('hidden');
+      
+      await wait(1200);
+
+      // --- PHASE 2: Tables 3 & 4 (Retrieve Multipliers) ---
+      drawConnections(['cc-purchase', 'cc-static', 'cc-promo']);
+      document.getElementById('table-3').className = "draggable-card absolute bg-slate-900 border-2 border-emerald-500 hover:border-emerald-500 rounded-xl shadow-2xl shadow-emerald-500/10 w-72 z-20 transition-all duration-300 transform scale-[1.02]";
+      document.getElementById('table-4').className = "draggable-card absolute bg-slate-900 border-2 border-emerald-500 hover:border-emerald-500 rounded-xl shadow-2xl shadow-emerald-500/10 w-72 z-20 transition-all duration-300 transform scale-[1.02]";
+      
+      document.getElementById('step-card-2').className = "flex gap-3 p-3 rounded-xl border border-emerald-500/40 bg-emerald-950/10 transition-all";
+      document.getElementById('step-badge-2').className = "w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-slate-950 transition-all shadow-md shadow-emerald-500/20";
+      document.getElementById('step-card-2').querySelector('.coding-snippet').classList.remove('hidden');
+
+      await wait(1200);
+
+      // --- PHASE 3: Table 2 (Map Categories & Resolve) ---
+      drawConnections(['cc-purchase', 'cc-static', 'cc-promo', 'static-cat', 'promo-cat', 'cat-purchase']);
+      document.getElementById('table-2').className = "draggable-card absolute bg-slate-900 border-2 border-emerald-500 hover:border-emerald-500 rounded-xl shadow-2xl shadow-emerald-500/10 w-72 z-20 transition-all duration-300 transform scale-[1.02]";
+      
+      document.getElementById('step-card-3').className = "flex gap-3 p-3 rounded-xl border border-emerald-500/40 bg-emerald-950/10 transition-all";
+      document.getElementById('step-badge-3').className = "w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-slate-950 transition-all shadow-md shadow-emerald-500/20";
+      document.getElementById('step-card-3').querySelector('.coding-snippet').classList.remove('hidden');
+
+      await wait(1200);
+
+      // --- PHASE 4: Optimization Audit Evaluation & Alerts ---
+      document.getElementById('step-card-4').className = "flex gap-3 p-3 rounded-xl border border-emerald-500/40 bg-emerald-950/10 transition-all";
+      document.getElementById('step-badge-4').className = "w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-slate-950 transition-all shadow-md shadow-emerald-500/20";
+      document.getElementById('step-card-4').querySelector('.coding-snippet').classList.remove('hidden');
+
+      // Calculate the Audits!
+      const usedStaticRate = cardData.static_bonuses[activeCategoryKey] || 1.0;
+      
+      // Calculate max static rate across all cards
+      let maxStaticRate = 1.0;
+      let optimalCardName = cardData.cc.name;
+      let optimalCardId = cardData.cc.id;
+
+      Object.keys(mockCardDb).forEach(key => {
+        const otherCard = mockCardDb[key];
+        const otherRate = otherCard.static_bonuses[activeCategoryKey] || 1.0;
+        if (otherRate > maxStaticRate) {
+          maxStaticRate = otherRate;
+          optimalCardName = otherCard.cc.name;
+          optimalCardId = otherCard.cc.id;
+        }
+      });
+
+      const auditFeedback = document.getElementById('audit-feedback');
+      const isOptimal = usedStaticRate >= maxStaticRate;
+
+      if (isOptimal) {
+        // Optimal choice
+        auditFeedback.className = "p-2.5 rounded-lg text-xs border border-emerald-500/30 bg-emerald-950/20 text-emerald-300 font-medium space-y-1";
+        auditFeedback.innerHTML = `
+          <div class="flex items-center gap-1.5 font-bold">
+            <i data-lucide="shield-check" class="w-4 h-4"></i> Perfect Match!
+          </div>
+          <div>No action required. Used card <strong>${cardData.cc.name}</strong> yielded the highest static rate for <strong>${categoryName}</strong> (${usedStaticRate}%).</div>
+        `;
+      } else {
+        // Alarm mismatch alert triggered
+        auditFeedback.className = "p-2.5 rounded-lg text-xs border border-rose-500/30 bg-rose-950/20 text-rose-300 font-medium space-y-1.5 animate-pulse";
+        auditFeedback.innerHTML = `
+          <div class="flex items-center gap-1.5 font-bold text-rose-400">
+            <i data-lucide="bell" class="w-4 h-4"></i> Optimization Alert Sent!
+          </div>
+          <div>User swiped <strong>${cardData.cc.name}</strong> (${usedStaticRate}%) but missed out on the higher <strong>${maxStaticRate}%</strong> static rate available on <strong>${optimalCardName}</strong> for <strong>${categoryName}</strong>.</div>
+        `;
+      }
+      auditFeedback.classList.remove('hidden');
+
+      // Compile final resolved diagnostic JSON trace
+      const outputJson = {
+        transaction_logged: {
+          purchase_id: "TXN_" + Math.floor(100000 + Math.random() * 900000),
+          amount: 100.00,
+          category_id: activeCategoryKey,
+          resolved_label: categoryName,
+          timestamp: new Date().toISOString()
+        },
+        card_used: {
+          id: cardData.cc.id,
+          name: cardData.cc.name,
+          reward_applied: `${usedStaticRate}% Static Rate`
+        },
+        reward_audit: {
+          used_rate: `${usedStaticRate}%`,
+          max_system_rate: `${maxStaticRate}%`,
+          highest_yield_card: optimalCardName,
+          status: isOptimal ? "OPTIMAL_USAGE" : "SUB_OPTIMAL_USAGE",
+          action: isOptimal ? "NO_ACTION" : "SEND_ALERT_NOTIFICATION"
+        }
+      };
+
+      const outContainer = document.getElementById('payload-container');
+      const outText = document.getElementById('resolved-json-out');
+      
+      outText.textContent = JSON.stringify(outputJson, null, 2);
+      outContainer.classList.remove('hidden');
+      outContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
