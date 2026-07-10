@@ -62,7 +62,8 @@ Key Deliverable: Developed Sequence Diagrams, Activity Maps, and UI Logic Workfl
 
 Focus Areas: UML Modeling, Decision Logic, and User Experience (UX) Strategy.
 
-### Credit Card Rewards Optimization Engine
+### [System_Architecture_Models](./System_Architecture_Models)
+## Credit Card Rewards Optimization Engine
 [Credit_Card_Bonuses_Database](./Credit_Card_Bonuses_database_schema_flow_visualizer.html)and [Credit_Card_Bonuses_Process_Flow](./Credit_Card_Bonuses_process_flow_visualizer.html)
 Objective: This project builds an interactive simulation suite to demonstrate the real-time processing, validation, and auditing lifecycle of financial transaction data.  
 
@@ -70,7 +71,7 @@ Key Deliverables: Interactive Schema Canvas (ERD): A draggable, coordinate-aware
 
 Focus Areas: System Process Architecture: Focuses on runtime sequence mapping, operational latency reduction, and event-driven alerting rules. Information & Data Architecture: Focuses on managing schema integrity, validating foreign key traceability, and isolating heavy asynchronous database queries  
 
-### Additional Designs: 
+## Additional Designs: 
 ![PCI-DSS_Architecture_Board](./PCI-DSS_Tokenization_Architect_Board.jpg)
 ![TDEE Logic Workflow](./TDEE_Calculator_Logic_Workflow.jpg)
 ![Habit App Architecture](./Habit_App_Logic_Architecture_Mabb.jpg)
