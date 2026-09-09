@@ -1,5 +1,5 @@
 # Jennie Mabb, M.S.
-### Senior Management Analyst | Process & Data Integrity Specialist
+### Senior Process & Management Analyst | Process & Data Integrity Specialist
 **Specializing in Requirements Elicitation, Strategic Architecture & Operational Governance**
 
 [![ISO 27001 Lead Implementer](https://img.shields.io/badge/Certified-ISO%2027001%20Lead%20Implementer-0A66C2)](#)
