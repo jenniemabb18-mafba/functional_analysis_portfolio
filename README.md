@@ -1,9 +1,9 @@
 # Jennie Mabb, M.S.
-### Senior Process & Management Analyst | Data Quality & Governance Specialist
+### Business Process & Compliance Analyst | Data Quality & Governance Specialist
 **Specializing in Requirements Elicitation, Compliance Architecture & Operational Governance**
 
 [![ISO 27001 Lead Implementer](https://img.shields.io/badge/Certified-ISO%2027001%20Lead%20Implementer-0A66C2)](#)
-[![Public Trust](https://img.shields.io/badge/Security%20Status-Former%20Public%20Trust%20(DOJ)-orange)](#)
+[![Public Trust](https://img.shields.io/badge/Security%20Status-Former%20Public%20Trust%20(DOJ)-green)](#)
 [![Location](https://img.shields.io/badge/Location-Virginia%20(Remote--Preferred)-informational)](#)
 
 ---
